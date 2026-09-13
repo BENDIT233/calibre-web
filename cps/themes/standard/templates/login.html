@@ -48,7 +48,7 @@
         {% endif %}
         {% if 3 in oauth_check %}
         <div class="form-group">
-          <a href="{{url_for('oauth.generic_login')}}" class="btn btn-primary btn-block">{{_('Log in with %(provider)s', provider=oauth_check[3])}}</a>
+          <a href="{{url_for('oauth.generic_login')}}" class="btn btn-primary btn-block">{{_('Log in with %(provider)s', provider=login_button)}}</a>
         </div>
         {% endif %}
       {% else %}
@@ -68,7 +68,7 @@
         </a>
       {% endif %}
       {% if 3 in oauth_check %}
-        <a href="{{url_for('oauth.generic_login')}}" class="pull-right generic">{{_('Log in with %(provider)s', provider=oauth_check[3])}}</a>
+        <a href="{{url_for('oauth.generic_login')}}" class="pull-right generic">{{_('Log in with %(provider)s', provider=login_button)}}</a>
       {% endif %}
       {% endif %}
     {% endif %}

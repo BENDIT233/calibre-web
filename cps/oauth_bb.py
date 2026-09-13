@@ -437,7 +437,7 @@ def generate_oauth_blueprints():
                                                     user=current_user, user_required=True)
         app.register_blueprint(blueprint, url_prefix="/login")
         if element['active']:
-            register_oauth_blueprint(element['id'], element.get('login_button') or element['provider_name'])
+            register_oauth_blueprint(element['id'], element['provider_name'])
     return oauthblueprints
 
 
