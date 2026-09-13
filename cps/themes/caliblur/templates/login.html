@@ -1,6 +1,6 @@
 {% extends theme("layout.html") %}
 {% block body %}
-<div class="well {% if config.config_login_type == 2 and config.config_oauth_only_login %}col-sm-4 col-sm-offset-4{% else %}col-sm-6 col-sm-offset-2{% endif %} caliblur-login-panel" {% if config.config_login_type == 2 and config.config_oauth_only_login %}style="margin-top:8%"{% endif %}>
+<div class="well {% if config.config_login_type == 2 and config.config_oauth_only_login %}{% else %}col-sm-6 col-sm-offset-2{% endif %} caliblur-login-panel" {% if config.config_login_type == 2 and config.config_oauth_only_login %}style="position:fixed; top:38%; left:50%; transform:translate(-50%,-50%); width:420px; max-width:92vw; margin:0; z-index:99;"{% endif %}>
   <h2 style="margin-top: 0">{{_('Login')}}</h2>
   <form method="POST" role="form">
     <input type="hidden" name="next" value="{{next_url}}">

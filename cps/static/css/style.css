@@ -511,3 +511,8 @@ body > div.container-fluid  {
 .input-group:not(.input-group-sm) .toggle-password {
   height: 40px;
 }
+
+#query {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
