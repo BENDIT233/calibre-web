@@ -601,7 +601,7 @@ def google_login_unlink():
 @oauth.route('/link/generic')
 @oauth_required
 def generic_login():
-    if generic is None or not generic.authorized:
+    if generic is None or not generic.session.authorized:
         return redirect(url_for("generic.login"))
     try:
         resp = generic.session.get(oauthblueprints[2]['userinfo_url'])
