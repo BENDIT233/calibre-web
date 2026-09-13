@@ -311,8 +311,24 @@ def ajax_oauth_check():
     if missing:
         return make_response(jsonify({"ok": False, "message": _(
             "Discovery document is missing: %(endpoints)s", endpoints=", ".join(missing))}))
+    # The endpoints returned by discovery point to the provider's public domain; the
+    # token/userinfo calls are made server-side, so verify they are reachable from here
+    unreachable = []
+    for key in ("token_endpoint", "userinfo_endpoint"):
+        url = endpoints[key]
+        try:
+            probe = requests.get(url, timeout=8)
+            if probe.status_code == 403:
+                unreachable.append("%s -> HTTP 403" % url)
+        except Exception as ex:
+            unreachable.append("%s (%s)" % (url, str(ex)[:80]))
+    if unreachable:
+        return make_response(jsonify({"ok": False, "message": _(
+            "Discovery is reachable, but the server cannot access: %(blocked)s — the endpoints point "
+            "to the public domain (pin the host via extra_hosts/DNS, or allow them in your proxy/firewall)",
+            blocked="; ".join(unreachable))}))
     return make_response(jsonify({"ok": True, "message": _(
-        "Connection OK (IP %(ip)s) — all endpoints present", ip=ip), "endpoints": endpoints}))
+        "Connection OK (IP %(ip)s) — all endpoints present and reachable", ip=ip), "endpoints": endpoints}))
 
 
 @admi.route("/admin/alive", methods=["GET"])

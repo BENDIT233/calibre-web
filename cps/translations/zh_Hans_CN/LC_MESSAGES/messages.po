@@ -4508,3 +4508,7 @@ msgstr "连接成功（IP %(ip)s）— 端点齐全"
 #: cps/admin.py
 msgid "OAuth is not installed"
 msgstr "未安装 OAuth 支持"
+
+#: cps/admin.py
+msgid "Discovery is reachable, but the server cannot access: %(blocked)s — the endpoints point to the public domain (pin the host via extra_hosts/DNS, or allow them in your proxy/firewall)"
+msgstr "discovery 可达，但服务器无法访问以下端点：%(blocked)s — 端点指向公网域名（可在容器 hosts 中钉内网 IP，或在反代/防火墙放行）"
