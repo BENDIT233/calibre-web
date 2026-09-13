@@ -366,6 +366,18 @@
           </div>
           {% endif %}
         {% endfor %}
+          <div class="form-group">
+            <input type="checkbox" id="config_oauth_only_login" name="config_oauth_only_login" {% if config.config_oauth_only_login %}checked{% endif %}>
+            <label for="config_oauth_only_login">{{_('Only allow OAuth login, disable the username/password form')}}</label>
+          </div>
+          <div class="form-group">
+            <label for="config_opds_login_username">{{_('OPDS Username (an existing calibre-web user)')}}</label>
+            <input type="text" class="form-control" id="config_opds_login_username" name="config_opds_login_username" value="{% if config.config_opds_login_username %}{{ config.config_opds_login_username }}{% endif %}" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="config_opds_login_password">{{_('OPDS Password (leave empty to keep the current one)')}}</label>
+            <input type="password" class="form-control" id="config_opds_login_password" name="config_opds_login_password" value="" autocomplete="new-password">
+          </div>
         </div>
       {% endif %}
       {% endif %}

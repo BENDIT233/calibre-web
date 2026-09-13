@@ -642,6 +642,28 @@ def migrate_oauth_provider_table(engine, _session):
             trans.commit()
 
 
+def migrate_settings_table(engine, _session):
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT config_oauth_only_login FROM settings LIMIT 1"))
+    except exc.OperationalError:  # Database is not compatible, some columns are missing
+        with engine.connect() as conn:
+            trans = conn.begin()
+            for column_definition in ("config_oauth_only_login Boolean",
+                                      "config_opds_login_username String",
+                                      "config_opds_login_password String"):
+                try:
+                    conn.execute(text("ALTER TABLE settings ADD column '{}'".format(column_definition)))
+                except exc.OperationalError:
+                    pass  # Column already exists
+            try:
+                conn.execute(text("UPDATE settings SET config_oauth_only_login=0 WHERE config_oauth_only_login IS NULL"))
+                conn.execute(text("UPDATE settings SET config_opds_login_username='' WHERE config_opds_login_username IS NULL"))
+            except exc.OperationalError:
+                pass
+            trans.commit()
+
+
 # Migrate database to current version, has to be updated after every database change. Currently, migration from
 # maybe 4/5 versions back to current should work.
 # Migration is done by checking if relevant columns are existing, and then adding rows with SQL commands
@@ -652,6 +674,7 @@ def migrate_Database(_session):
     migrate_user_session_table(engine, _session)
     migrate_remote_auth_token_table(engine, _session)
     migrate_oauth_provider_table(engine, _session)
+    migrate_settings_table(engine, _session)
 
 
 def clean_database(_session):

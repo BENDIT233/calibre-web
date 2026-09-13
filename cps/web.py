@@ -1391,6 +1391,8 @@ def login():
 @limiter.limit("40/day", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower())
 @limiter.limit("3/minute", key_func=lambda: strip_whitespaces(request.form.get('username', "")).lower())
 def login_post():
+    if config.config_login_type == constants.LOGIN_OAUTH and config.config_oauth_only_login:
+        abort(404)
     form = request.form.to_dict()
     username = strip_whitespaces(form.get('username', "")).lower().replace("\n","").replace("\r","")
     if current_user is not None and current_user.is_authenticated:

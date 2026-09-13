@@ -1,0 +1,32 @@
+# Calibre-Web 二开版（通用 OIDC 登录，对接 Pocket ID）
+#
+# 部署到 NAS：
+#   1. 把本文件放到 NAS 上（例如 /volume1/docker/calibre-web-compose/）
+#   2. 镜像已由 GitHub Actions 自动发布到 GHCR，直接 docker compose up -d
+#      （也可取消 build 注释在本机/ NAS 上自行构建）
+#   3. 首次启动后，./config 里会生成/沿用 app.db；管理后台 → 配置：
+#        - 书库目录填 /books
+#        - 登录方式选 OAuth，在 generic 区填 discovery URL / Client ID / Secret
+#        - 按需勾选「仅允许 OAuth 登录」并配置 OPDS 专用凭据
+#
+# 从 linuxserver/calibre-web 迁移：把原容器的 config 目录内容拷到 ./config 即可，
+# 已有用户库结构兼容，首次启动会自动 ALTER 补齐新列；老用户按邮箱在首次
+# OIDC 登录时自动绑定。
+services:
+  calibre-web:
+    image: ghcr.io/bendit233/calibre-web:latest
+    # build: .
+    container_name: calibre-web
+    restart: unless-stopped
+    # 与原 linuxserver 部署的 PUID/PGID 保持一致，保证对旧 config/书库的写权限
+    user: "1027:100"
+    environment:
+      - TZ=Asia/Shanghai
+      - CALIBRE_DBPATH=/config
+      # 仅当 8083 通过 http 直接对外（无 https 反代）调试 OIDC 时才需要：
+      # - OAUTHLIB_INSECURE_TRANSPORT=1
+    ports:
+      - "8083:8083"
+    volumes:
+      - "./config:/config"
+      - "/volume1/Calibre书库:/books"

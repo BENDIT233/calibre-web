@@ -53,6 +53,17 @@ def verify_password(username, password):
             if check_password_hash(str(user.password), password):
                 [limiter.limiter.clear(limit.limit, *limit.request_args) for limit in limiter.current_limits]
                 return user
+    # Dedicated OPDS credentials from the admin configuration, usable independently of the
+    # user passwords (e.g. when password login is disabled in favour of OAuth)
+    if username and config.config_opds_login_username \
+            and username.lower() == str(config.config_opds_login_username).lower() \
+            and config.config_opds_login_password \
+            and check_password_hash(str(config.config_opds_login_password), password):
+        opds_user = ub.session.query(ub.User).filter(
+            func.lower(ub.User.name) == str(config.config_opds_login_username).lower()).first()
+        if opds_user and opds_user.name.lower() != "guest":
+            [limiter.limiter.clear(limit.limit, *limit.request_args) for limit in limiter.current_limits]
+            return opds_user
     ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
     log.warning('OPDS Login failed for user "%s" IP-address: %s', username, ip_address)
     return None

@@ -5,6 +5,7 @@
   <form method="POST" role="form">
     <input type="hidden" name="next" value="{{next_url}}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if not (config.config_login_type == 2 and config.config_oauth_only_login) %}
     <div class="form-group">
       <label for="username">{{_('Username')}}</label>
       <input type="text" class="form-control" id="username" name="username" autocapitalize="off" placeholder="{{_('Username')}}" value="{{ username }}">
@@ -29,7 +30,8 @@
     {% if config.config_login_type == 0 and mail%}
     <button type="submit" name="forgot" value="forgot" class="btn btn-default">{{_('Forgot Password?')}}</button>
     {% endif %}
-    {% if g.allow_registration %}
+    {% endif %}
+    {% if g.allow_registration and not (config.config_login_type == 2 and config.config_oauth_only_login) %}
     <a class="btn btn-default" id="register" href="{{url_for('web.register')}}"><span class="glyphicon glyphicon-user"></span> {{_('Register')}}</a>
     {% endif %}
     {% if config.config_remote_login %}

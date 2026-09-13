@@ -1872,6 +1872,11 @@ def _configuration_update_helper():
             _config_string(to_save, "config_converterpath")
 
         reboot_required |= _config_int(to_save, "config_login_type")
+        _config_checkbox_int(to_save, "config_oauth_only_login")
+        _config_string(to_save, "config_opds_login_username")
+        opds_password = to_save.get("config_opds_login_password", "")
+        if opds_password:
+            config.config_opds_login_password = generate_password_hash(opds_password)
 
         # LDAP configurator
         if config.config_login_type == constants.LOGIN_LDAP:

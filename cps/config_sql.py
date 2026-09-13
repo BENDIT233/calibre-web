@@ -121,6 +121,9 @@ class _Settings(_Base):
     config_googlebooks_api_key = Column(String, default='')
     config_register_email = Column(Boolean, default=False)
     config_login_type = Column(Integer, default=0)
+    config_oauth_only_login = Column(Boolean, default=False)
+    config_opds_login_username = Column(String, default="")
+    config_opds_login_password = Column(String)
 
     config_kobo_proxy = Column(Boolean, default=False)
 
