@@ -1,6 +1,6 @@
 {% extends theme("layout.html") %}
 {% block body %}
-<div class="well col-sm-6 col-sm-offset-2">
+<div class="well {% if config.config_login_type == 2 and config.config_oauth_only_login %}col-sm-4 col-sm-offset-4{% else %}col-sm-6 col-sm-offset-2{% endif %}" {% if config.config_login_type == 2 and config.config_oauth_only_login %}style="margin-top:8%"{% endif %}>
   <h2 style="margin-top: 0">{{_('Login')}}</h2>
   <form method="POST" role="form">
     <input type="hidden" name="next" value="{{next_url}}">
@@ -35,6 +35,23 @@
     <a href="{{url_for('remotelogin.remote_login')}}" id="remote_login" class="pull-right">{{_('Log in with Magic Link')}}</a>
     {% endif %}
     {% if config.config_login_type == 2 %}
+      {% if config.config_oauth_only_login %}
+        {% if 1 in oauth_check %}
+        <div class="form-group">
+          <a href="{{url_for('oauth.github_login')}}" class="btn btn-default btn-block">{{_('Log in with %(provider)s', provider=oauth_check[1])}}</a>
+        </div>
+        {% endif %}
+        {% if 2 in oauth_check %}
+        <div class="form-group">
+          <a href="{{url_for('oauth.google_login')}}" class="btn btn-default btn-block">{{_('Log in with %(provider)s', provider=oauth_check[2])}}</a>
+        </div>
+        {% endif %}
+        {% if 3 in oauth_check %}
+        <div class="form-group">
+          <a href="{{url_for('oauth.generic_login')}}" class="btn btn-primary btn-block">{{_('Log in with %(provider)s', provider=oauth_check[3])}}</a>
+        </div>
+        {% endif %}
+      {% else %}
       {% if 1 in oauth_check %}
         <a href="{{url_for('oauth.github_login')}}" class="pull-right github">
           <svg height="32" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="32" aria-hidden="true">
@@ -52,6 +69,7 @@
       {% endif %}
       {% if 3 in oauth_check %}
         <a href="{{url_for('oauth.generic_login')}}" class="pull-right generic">{{_('Log in with %(provider)s', provider=oauth_check[3])}}</a>
+      {% endif %}
       {% endif %}
     {% endif %}
   </form>
