@@ -632,11 +632,18 @@ def migrate_oauth_provider_table(engine, _session):
     except exc.OperationalError:  # Database is not compatible, some columns are missing
         with engine.connect() as conn:
             trans = conn.begin()
-            for column_definition in ("oauth_base_url String", "oauth_auth_url String", "oauth_token_url String",
-                                      "scope String", "username_mapper String", "email_mapper String",
-                                      "login_button String", "auto_create_user Boolean"):
+            for statement in (
+                "ALTER TABLE oauthProvider ADD column 'oauth_base_url' String",
+                "ALTER TABLE oauthProvider ADD column 'oauth_auth_url' String",
+                "ALTER TABLE oauthProvider ADD column 'oauth_token_url' String",
+                "ALTER TABLE oauthProvider ADD column 'scope' String",
+                "ALTER TABLE oauthProvider ADD column 'username_mapper' String",
+                "ALTER TABLE oauthProvider ADD column 'email_mapper' String",
+                "ALTER TABLE oauthProvider ADD column 'login_button' String",
+                "ALTER TABLE oauthProvider ADD column 'auto_create_user' Boolean",
+            ):
                 try:
-                    conn.execute(text("ALTER TABLE oauthProvider ADD column '{}'".format(column_definition)))
+                    conn.execute(text(statement))
                 except exc.OperationalError:
                     pass  # Column already exists
             trans.commit()
@@ -649,11 +656,13 @@ def migrate_settings_table(engine, _session):
     except exc.OperationalError:  # Database is not compatible, some columns are missing
         with engine.connect() as conn:
             trans = conn.begin()
-            for column_definition in ("config_oauth_only_login Boolean",
-                                      "config_opds_login_username String",
-                                      "config_opds_login_password String"):
+            for statement in (
+                "ALTER TABLE settings ADD column 'config_oauth_only_login' Boolean",
+                "ALTER TABLE settings ADD column 'config_opds_login_username' String",
+                "ALTER TABLE settings ADD column 'config_opds_login_password' String",
+            ):
                 try:
-                    conn.execute(text("ALTER TABLE settings ADD column '{}'".format(column_definition)))
+                    conn.execute(text(statement))
                 except exc.OperationalError:
                     pass  # Column already exists
             try:
