@@ -1,0 +1,49 @@
+name: Upstream merge check
+
+on:
+  schedule:
+    - cron: "0 21 * * 0" # 每周一 05:00 (UTC+8)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  merge-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: oidc
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "merge-check"
+          git config user.email "merge-check@users.noreply.github.com"
+          git remote add upstream https://github.com/janeczku/calibre-web.git
+          git fetch upstream master
+
+      - name: Attempt merge
+        id: merge
+        run: |
+          if git merge --no-commit --no-ff upstream/master > /tmp/merge.log 2>&1; then
+            echo "conflicts=false" >> "$GITHUB_OUTPUT"
+            git merge --abort
+          else
+            echo "conflicts=true" >> "$GITHUB_OUTPUT"
+            {
+              echo "### 与上游 master 的冲突文件"
+              git diff --name-only --diff-filter=U
+              echo
+              echo "### 合并输出"
+              cat /tmp/merge.log
+            } > "$GITHUB_STEP_SUMMARY"
+            git merge --abort
+          fi
+
+      - name: Fail on conflicts
+        if: steps.merge.outputs.conflicts == 'true'
+        run: |
+          echo "::error::上游 master 与 oidc 分支存在合并冲突，受影响文件见 Summary"
+          exit 1
