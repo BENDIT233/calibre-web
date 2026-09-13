@@ -273,6 +273,14 @@ class OAuthProvider(Base):
     provider_name = Column(String)
     oauth_client_id = Column(String)
     oauth_client_secret = Column(String)
+    oauth_base_url = Column(String)
+    oauth_auth_url = Column(String)
+    oauth_token_url = Column(String)
+    scope = Column(String, default="openid profile email")
+    username_mapper = Column(String, default="preferred_username")
+    email_mapper = Column(String, default="email")
+    login_button = Column(String)
+    auto_create_user = Column(Boolean, default=False)
     active = Column(Boolean)
 
 
@@ -615,6 +623,25 @@ def migrate_remote_auth_token_table(engine, _session):
             trans.commit()
 
 
+def migrate_oauth_provider_table(engine, _session):
+    if not oauth_support:
+        return
+    try:
+        _session.query(exists().where(OAuthProvider.scope)).scalar()
+        _session.commit()
+    except exc.OperationalError:  # Database is not compatible, some columns are missing
+        with engine.connect() as conn:
+            trans = conn.begin()
+            for column_definition in ("oauth_base_url String", "oauth_auth_url String", "oauth_token_url String",
+                                      "scope String", "username_mapper String", "email_mapper String",
+                                      "login_button String", "auto_create_user Boolean"):
+                try:
+                    conn.execute(text("ALTER TABLE oauthProvider ADD column '{}'".format(column_definition)))
+                except exc.OperationalError:
+                    pass  # Column already exists
+            trans.commit()
+
+
 # Migrate database to current version, has to be updated after every database change. Currently, migration from
 # maybe 4/5 versions back to current should work.
 # Migration is done by checking if relevant columns are existing, and then adding rows with SQL commands
@@ -624,6 +651,7 @@ def migrate_Database(_session):
     migrate_registration_table(engine, _session)
     migrate_user_session_table(engine, _session)
     migrate_remote_auth_token_table(engine, _session)
+    migrate_oauth_provider_table(engine, _session)
 
 
 def clean_database(_session):

@@ -1205,6 +1205,19 @@ def _configuration_oauth_helper(to_save):
             {"oauth_client_id": to_save["config_" + str(element['id']) + "_oauth_client_id"],
              "oauth_client_secret": to_save["config_" + str(element['id']) + "_oauth_client_secret"],
              "active": element["active"]})
+        if element['provider_name'] == 'generic':
+            generic_values = {}
+            for field in ("oauth_base_url", "oauth_auth_url", "oauth_token_url", "scope",
+                          "username_mapper", "email_mapper", "login_button"):
+                value = to_save.get("config_" + str(element['id']) + "_" + field, "")
+                if value != (element.get(field) or ""):
+                    reboot_required = True
+                element[field] = value
+                generic_values[field] = value
+            element['auto_create_user'] = 1 if to_save.get(
+                "config_" + str(element['id']) + "_oauth_auto_create") == "on" else 0
+            generic_values["auto_create_user"] = element['auto_create_user']
+            ub.session.query(ub.OAuthProvider).filter(ub.OAuthProvider.id == element['id']).update(generic_values)
     return reboot_required
 
 
