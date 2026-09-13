@@ -20,6 +20,11 @@ services:
     restart: unless-stopped
     # 与原 linuxserver 部署的 PUID/PGID 保持一致，保证对旧 config/书库的写权限
     user: "1027:100"
+    # 关键：域名公网解析走 Cloudflare，CF 的 Bot 防护会对容器内的非浏览器请求返回 403。
+    # 把 id.bendit.cc 钉到内网 IP（Pocket ID 所在机器），discovery/token/userinfo 全部直连内网。
+    # 若内网 IP 变更需同步修改；也可改用 dns: 指向会做内网改写的 DNS（如 AdGuard）。
+    extra_hosts:
+      - "id.bendit.cc:192.168.31.250"
     environment:
       - TZ=Asia/Shanghai
       - CALIBRE_DBPATH=/config
