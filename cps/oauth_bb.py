@@ -610,8 +610,10 @@ def generic_login():
         flash(_("Generic OAuth error, please retry later."), category="error")
         log.error("Generic OAuth error, please retry later")
     except (InvalidGrantError, TokenExpiredError) as e:
-        flash(_("Generic OAuth error: {}").format(e), category="error")
+        # Access tokens expire; running the authorize flow again silently
+        # issues a fresh one as long as the provider session is alive
         log.error(e)
+        return redirect(url_for("generic.login"))
     return redirect(url_for('web.login'))
 
 

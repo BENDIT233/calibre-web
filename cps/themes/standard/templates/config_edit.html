@@ -361,8 +361,8 @@
             <input type="text" class="form-control" id="config_{{ prov['id'] }}_login_button" name="config_{{ prov['id'] }}_login_button" value="{% if prov['login_button']%}{{ prov['login_button'] }}{% endif %}" autocomplete="off">
           </div>
           <div class="form-group">
-            <label for="config_{{ prov['id'] }}_oauth_auto_create">{{_('%(provider)s OAuth automatically create missing users', provider=prov['provider_name'])}}</label>
             <input type="checkbox" id="config_{{ prov['id'] }}_oauth_auto_create" name="config_{{ prov['id'] }}_oauth_auto_create" {% if prov['auto_create_user'] %}checked{% endif %}>
+            <label for="config_{{ prov['id'] }}_oauth_auto_create">{{_('%(provider)s OAuth automatically create missing users', provider=prov['provider_name'])}}</label>
           </div>
           {% endif %}
         {% endfor %}

@@ -4404,3 +4404,75 @@ msgstr "同步所选书架到 Kobo"
 msgid "Show Read/Unread Section"
 msgstr "显示已读、未读栏目"
 
+
+#: cps/themes/standard/templates/login.html
+msgid "Log in with %(provider)s"
+msgstr "使用 %(provider)s 登录"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Discovery URL / Issuer Base URL"
+msgstr "%(provider)s OAuth Discovery URL / Issuer 地址"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Authorization Endpoint (fallback)"
+msgstr "%(provider)s OAuth 授权端点（备用）"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Token Endpoint (fallback)"
+msgstr "%(provider)s OAuth 令牌端点（备用）"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Scope"
+msgstr "%(provider)s OAuth 作用域"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Username Claim"
+msgstr "%(provider)s OAuth 用户名字段"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Email Claim"
+msgstr "%(provider)s OAuth 邮箱字段"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth Login Button Text"
+msgstr "%(provider)s OAuth 登录按钮文字"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "%(provider)s OAuth automatically create missing users"
+msgstr "%(provider)s OAuth 自动创建缺失的用户"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "Only allow OAuth login, disable the username/password form"
+msgstr "仅允许 OAuth 登录，禁用用户名/密码表单"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "OPDS Username (an existing calibre-web user)"
+msgstr "OPDS 用户名（须为已有的 calibre-web 用户）"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "OPDS Password (leave empty to keep the current one)"
+msgstr "OPDS 密码（留空则保持不变）"
+
+#: cps/oauth_bb.py
+msgid "Failed to log in with %(provider)s."
+msgstr "使用 %(provider)s 登录失败。"
+
+#: cps/oauth_bb.py
+msgid "Failed to fetch user info from %(provider)s."
+msgstr "从 %(provider)s 获取用户信息失败。"
+
+#: cps/oauth_bb.py
+msgid "This %(provider)s account is not linked to any user."
+msgstr "此 %(provider)s 账号未关联任何用户。"
+
+#: cps/oauth_bb.py
+msgid "Automatic registration is not possible, the %(provider)s account does not expose username and email."
+msgstr "无法自动注册：%(provider)s 账号未提供用户名和邮箱。"
+
+#: cps/oauth_bb.py
+msgid "Generic OAuth error, please retry later."
+msgstr "通用 OAuth 出错，请稍后重试。"
+
+#: cps/oauth_bb.py
+msgid "Generic OAuth error: {}"
+msgstr "通用 OAuth 出错：{}"

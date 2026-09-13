@@ -507,7 +507,7 @@ body > div.container-fluid  {
   padding-right: 0px;
 }
 
-.input-group .form-control,
-.input-group .toggle-password {
+.input-group:not(.input-group-sm) .form-control,
+.input-group:not(.input-group-sm) .toggle-password {
   height: 40px;
 }
