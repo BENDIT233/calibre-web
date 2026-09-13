@@ -337,6 +337,37 @@
             <input type="text" class="form-control" id="config_{{ prov['id'] }}_oauth_base_url" name="config_{{ prov['id'] }}_oauth_base_url" value="{% if prov['oauth_base_url']%}{{ prov['oauth_base_url'] }}{% endif %}" autocomplete="off">
           </div>
           <div class="form-group">
+            <button type="button" id="oauth_check_btn" class="btn btn-default">{{_('Test OAuth provider connection')}}</button>
+            <span id="oauth_check_result" style="margin-left:10px;"></span>
+          </div>
+          <script>
+            (function () {
+              var btn = document.getElementById('oauth_check_btn');
+              var out = document.getElementById('oauth_check_result');
+              btn.addEventListener('click', function () {
+                var urlField = document.getElementById('config_{{ prov['id'] }}_oauth_base_url');
+                var csrfField = document.querySelector('input[name="csrf_token"]');
+                out.textContent = '...';
+                out.style.color = 'inherit';
+                var body = new URLSearchParams();
+                body.append('discovery_url', urlField ? urlField.value : '');
+                if (csrfField) body.append('csrf_token', csrfField.value);
+                fetch('{{ url_for("admin.ajax_oauth_check") }}', {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                  body: body.toString(),
+                  credentials: 'same-origin'
+                }).then(function (r) { return r.json(); }).then(function (d) {
+                  out.textContent = d.message || '';
+                  out.style.color = d.ok ? 'green' : 'red';
+                }).catch(function () {
+                  out.textContent = 'request error';
+                  out.style.color = 'red';
+                });
+              });
+            })();
+          </script>
+          <div class="form-group">
             <label for="config_{{ prov['id'] }}_oauth_auth_url">{{_('%(provider)s OAuth Authorization Endpoint (fallback)', provider=prov['provider_name'])}}</label>
             <input type="text" class="form-control" id="config_{{ prov['id'] }}_oauth_auth_url" name="config_{{ prov['id'] }}_oauth_auth_url" value="{% if prov['oauth_auth_url']%}{{ prov['oauth_auth_url'] }}{% endif %}" autocomplete="off">
           </div>

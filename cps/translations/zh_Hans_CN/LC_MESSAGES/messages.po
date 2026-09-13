@@ -4476,3 +4476,35 @@ msgstr "通用 OAuth 出错，请稍后重试。"
 #: cps/oauth_bb.py
 msgid "Generic OAuth error: {}"
 msgstr "通用 OAuth 出错：{}"
+
+#: cps/themes/standard/templates/config_edit.html
+msgid "Test OAuth provider connection"
+msgstr "测试 OAuth 提供商连接"
+
+#: cps/admin.py
+msgid "Discovery URL is empty"
+msgstr "Discovery URL 为空"
+
+#: cps/admin.py
+msgid "Connection to %(host)s (IP %(ip)s) failed: %(error)s"
+msgstr "连接 %(host)s（IP %(ip)s）失败：%(error)s"
+
+#: cps/admin.py
+msgid "HTTP %(status)s from %(host)s (IP %(ip)s) — no discovery document, Server: %(server)s"
+msgstr "HTTP %(status)s（来自 %(host)s，IP %(ip)s）— 未返回 discovery 文档，Server: %(server)s"
+
+#: cps/admin.py
+msgid "HTTP 200 but the response is not JSON (an error page from a reverse proxy/firewall?)"
+msgstr "HTTP 200 但响应不是 JSON（可能是反向代理/防火墙返回的错误页）"
+
+#: cps/admin.py
+msgid "Discovery document is missing: %(endpoints)s"
+msgstr "discovery 文档缺少端点：%(endpoints)s"
+
+#: cps/admin.py
+msgid "Connection OK (IP %(ip)s) — all endpoints present"
+msgstr "连接成功（IP %(ip)s）— 端点齐全"
+
+#: cps/admin.py
+msgid "OAuth is not installed"
+msgstr "未安装 OAuth 支持"

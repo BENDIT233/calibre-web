@@ -272,6 +272,49 @@ def ajax_db_config():
     return _db_configuration_update_helper()
 
 
+@admi.route("/admin/ajaxoauthcheck", methods=["POST"])
+@user_login_required
+@admin_required
+def ajax_oauth_check():
+    if not feature_support['oauth']:
+        return make_response(jsonify({"ok": False, "message": _("OAuth is not installed")}))
+    from .oauth_bb import build_discovery_url
+    import socket
+    import requests
+    discovery_url = build_discovery_url(request.form.get("discovery_url"))
+    if not discovery_url:
+        return make_response(jsonify({"ok": False, "message": _("Discovery URL is empty")}))
+    host = discovery_url.split('/')[2]
+    try:
+        ip = socket.gethostbyname(host)
+    except Exception:
+        ip = "?"
+    try:
+        resp = requests.get(discovery_url, timeout=10)
+    except Exception as ex:
+        return make_response(jsonify({"ok": False, "message": _(
+            "Connection to %(host)s (IP %(ip)s) failed: %(error)s", host=host, ip=ip, error=str(ex))}))
+    if resp.status_code != 200:
+        server_hint = resp.headers.get('Server', '?')
+        return make_response(jsonify({"ok": False, "message": _(
+            "HTTP %(status)s from %(host)s (IP %(ip)s) — no discovery document, Server: %(server)s",
+            status=resp.status_code, host=host, ip=ip, server=server_hint)}))
+    try:
+        metadata = resp.json()
+    except ValueError:
+        return make_response(jsonify({"ok": False, "message": _(
+            "HTTP 200 but the response is not JSON (an error page from a reverse proxy/firewall?)")}))
+    endpoints = {"authorization_endpoint": metadata.get("authorization_endpoint"),
+                 "token_endpoint": metadata.get("token_endpoint"),
+                 "userinfo_endpoint": metadata.get("userinfo_endpoint")}
+    missing = [key for key, value in endpoints.items() if not value]
+    if missing:
+        return make_response(jsonify({"ok": False, "message": _(
+            "Discovery document is missing: %(endpoints)s", endpoints=", ".join(missing))}))
+    return make_response(jsonify({"ok": True, "message": _(
+        "Connection OK (IP %(ip)s) — all endpoints present", ip=ip), "endpoints": endpoints}))
+
+
 @admi.route("/admin/alive", methods=["GET"])
 @user_login_required
 @admin_required

@@ -219,6 +219,14 @@ def unlink_oauth(provider):
     return redirect(url_for('web.profile'))
 
 
+def build_discovery_url(base_url):
+    """Derive the OIDC discovery document URL from the configured base URL"""
+    base_url = (base_url or "").strip().rstrip("/")
+    if base_url and not base_url.endswith("/.well-known/openid-configuration"):
+        base_url = base_url + "/.well-known/openid-configuration"
+    return base_url
+
+
 def _absolute_url(base_url, url):
     """Resolve a possibly relative endpoint URL against the issuer base URL"""
     if not url or url.startswith(("http://", "https://")) or not base_url:
@@ -228,11 +236,10 @@ def _absolute_url(base_url, url):
 
 def _resolve_generic_endpoints(element):
     """Resolve the endpoints of the generic provider, preferring the OIDC discovery document"""
-    base_url = (element.get('oauth_base_url') or "").strip().rstrip("/")
+    discovery_url = build_discovery_url(element.get('oauth_base_url'))
+    base_url = (discovery_url[:discovery_url.rfind('/.well-known')] if discovery_url else "").rstrip('/')
     element['oauth_issuer'] = base_url
-    if base_url:
-        discovery_url = base_url if base_url.endswith("/.well-known/openid-configuration") \
-            else base_url + "/.well-known/openid-configuration"
+    if discovery_url:
         try:
             metadata = requests.get(discovery_url, timeout=10)
             if metadata.ok:
